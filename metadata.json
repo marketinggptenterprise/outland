@@ -1,0 +1,8 @@
+{
+  "name": "Outland Studios",
+  "description": "Premium digital marketing and creative agency website",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
