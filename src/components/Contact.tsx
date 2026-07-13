@@ -6,45 +6,10 @@ export default function Contact() {
   const [formStatus, setFormStatus] = useState<'idle' | 'submitting' | 'success'>('idle');
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
+    // For the first time, FormSubmit needs a standard form submission to trigger the activation email.
+    // We will let the form submit natively to https://formsubmit.co/hello@outlandstudios.in
+    // Once activated, we can switch back to the AJAX version for a seamless experience.
     setFormStatus('submitting');
-    
-    const form = e.currentTarget;
-    const formData = new FormData(form);
-    const data = {
-      Name: formData.get('name'),
-      Business: formData.get('business') || 'Not specified',
-      Phone: formData.get('phone'),
-      Email: formData.get('email'),
-      Service: formData.get('service'),
-      Budget: formData.get('budget') || 'Not specified',
-      Details: formData.get('details')
-    };
-
-    fetch("https://formsubmit.co/ajax/hello@outlandstudios.in", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Accept": "application/json"
-      },
-      body: JSON.stringify(data)
-    })
-    .then(response => {
-      if (response.ok) {
-        setFormStatus('success');
-        form.reset();
-        setTimeout(() => setFormStatus('idle'), 5000);
-      } else {
-        throw new Error('Form submission failed');
-      }
-    })
-    .catch(error => {
-      console.error('Submission error:', error);
-      // Fallback to success simulation to keep the UX smooth even if network fails or blocker is present
-      setFormStatus('success');
-      form.reset();
-      setTimeout(() => setFormStatus('idle'), 5000);
-    });
   };
 
   const services = [
@@ -172,7 +137,9 @@ export default function Contact() {
               ) : null}
             </AnimatePresence>
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form action="https://formsubmit.co/hello@outlandstudios.in" method="POST" className="space-y-6">
+              <input type="hidden" name="_captcha" value="false" />
+              <input type="hidden" name="_subject" value="New Contact Form Submission - Outland Studios" />
               <div className="grid sm:grid-cols-2 gap-6">
                 <div>
                   <label htmlFor="name" className="block text-sm font-medium text-charcoal mb-2">Full Name *</label>
@@ -222,12 +189,11 @@ export default function Contact() {
 
               <motion.button 
                 type="submit" 
-                disabled={formStatus === 'submitting'}
-                className="w-full py-4 bg-charcoal text-white rounded-lg font-medium hover:bg-copper transition-colors disabled:opacity-70 disabled:cursor-not-allowed"
+                className="w-full py-4 bg-charcoal text-white rounded-lg font-medium hover:bg-copper transition-colors"
                 whileHover={{ scale: 1.015, y: -2, boxShadow: "0 10px 20px -5px rgba(0, 0, 0, 0.15)" }}
                 whileTap={{ scale: 0.995 }}
               >
-                {formStatus === 'submitting' ? 'Sending...' : 'Send Message'}
+                Send Message
               </motion.button>
             </form>
           </motion.div>
